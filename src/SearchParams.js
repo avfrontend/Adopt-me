@@ -1,5 +1,5 @@
-import { async } from "q";
 import { useState, useEffect } from "react";
+import useBreedList from "./useBreedList";
 import Pet from "./Pet";
 
 const ANIMALS = ["bird", "cat", "dog", "rabbit", "reptile"];
@@ -9,7 +9,7 @@ const SearchParams = () => {
   const [animal, setAnimal] = useState("");
   const [breed, setBreed] = useState("");
   const [pets, setPets] = useState([]);
-  const breeds = [];
+  const [breeds] = useBreedList(animal);
 
   useEffect(() => {
     requestPets();
@@ -21,16 +21,22 @@ const SearchParams = () => {
     );
 
     const json = await res.json();
-    console.log(json);
     setPets(json.pets);
+    console.log(json.pets);
   }
 
   return (
     <div className="search-params">
-      <form>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          requestPets();
+        }}
+      >
         <label htmlFor="location">
           location
           <input
+            onCut={console.log}
             id="location"
             onChange={(e) => setLocation(e.target.value)}
             value={location}
